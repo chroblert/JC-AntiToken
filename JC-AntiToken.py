@@ -55,85 +55,67 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
     def printcn(self,msg):
         print(msg.decode('utf-8').encode(sys_encoding))
     def drawUI(self):
-        # self.mainPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        # self.testBtn = JButton(u'one button',actionPerformed=self.testBtn_onClick)
-        # self.mainPanel.add(self.testBtn)
-        # self._callbacks.customizeUiComponent(self.mainPanel)
-        # self._callbacks.addSuiteTab(self)
-        # jpanel_left = JPanel(FlowLayout(FlowLayout.LEFT))
-
-
-        # jsplitpane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT,True)
-        # jpanel_left = JPanel(FlowLayout(FlowLayout.LEFT))
-        # jpanel_right = JPanel(FlowLayout(FlowLayout.LEFT))
+        # 最外层：垂直盒子，内放一个水平盒子+一个胶水
         out_vBox_main = Box.createVerticalBox()
         out_hGlue_main = Box.createGlue()
+        # 次外层：水平盒子，内放两个垂直盒子
         hBox_main = Box.createHorizontalBox()
+        # 左垂直盒子
         vBox_left = Box.createVerticalBox()
+        # 右垂直盒子
         vBox_right = Box.createVerticalBox()
 
-        # left panel
-        # layout = BoxLayout(jpanel_left, BoxLayout.Y_AXIS)
-        # jpanel_left.setLayout(layout)
+        # 左垂直盒子内部：发送请求包拿token
+        # URL标签
         jlabel_url = JLabel("URL: ")
         self.jtext_url = JTextField(25)
         self.jtext_url.setPreferredSize(Dimension(20,40))
-        self.jtext_url.setMaximumSize(Dimension(100000,100000))
-        # jpanel_url = JPanel(FlowLayout(FlowLayout.LEFT))
+        self.jtext_url.setMaximumSize(Dimension(1000000000,1000000000))
         hbox_url = Box.createHorizontalBox()
         hbox_url.add(jlabel_url)
         hbox_url.add(self.jtext_url)
         hbox_url.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-
+        # 请求方法标签
         jlabel_reqMeth = JLabel("RequestMethod: ")   
         self.jcombobox_reqMeth = JComboBox()
         self.jcombobox_reqMeth.addItem("GET")
         self.jcombobox_reqMeth.addItem("POST")
-        # jpanel_reqMeth = JPanel(FlowLayout(FlowLayout.LEFT))
         hbox_reqMeth = Box.createHorizontalBox()
         hbox_reqMeth.add(jlabel_reqMeth)
         hbox_reqMeth.add(self.jcombobox_reqMeth)
         hbox_reqMeth.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-
-
-        
+        # ContentType标签        
         jlabel_contentType = JLabel("ContentType: ")
         self.jcombobox_contentType = JComboBox()
         self.jcombobox_contentType.addItem("application/json")
         self.jcombobox_contentType.addItem("text/plain")
-        # jpanel_contentType = JPanel(FlowLayout(FlowLayout.LEFT))
         hbox_contentType = Box.createHorizontalBox()
         hbox_contentType.add(jlabel_contentType)
         hbox_contentType.add(self.jcombobox_contentType)
         hbox_contentType.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-
+        # 请求头标签
         jlabel_headers = JLabel("Headers: ")
         self.jtext_headers = JTextField(25)
         self.jtext_headers.setPreferredSize(Dimension(20,40))
-        self.jtext_headers.setMaximumSize(Dimension(100000,100000))
-        # jpanel_headers = JPanel(FlowLayout(FlowLayout.LEFT))
+        self.jtext_headers.setMaximumSize(Dimension(1000000000,1000000000))
         hbox_headers = Box.createHorizontalBox()
         hbox_headers.add(jlabel_headers)
         hbox_headers.add(self.jtext_headers)
         hbox_headers.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-
+        # 请求参数标签
         jlabel_data = JLabel("Data: ")
         self.jtext_data = JTextField(25)
         self.jtext_data.setPreferredSize(Dimension(20,40))
-        self.jtext_data.setMaximumSize(Dimension(100000,100000))
-        # jpanel_data = JPanel(FlowLayout(FlowLayout.LEFT))
+        self.jtext_data.setMaximumSize(Dimension(1000000000,1000000000))
         hbox_data = Box.createHorizontalBox()
         hbox_data.add(jlabel_data)
         hbox_data.add(self.jtext_data)
         hbox_data.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-        
-        # radioButton
-        # jpanel_radiobtn = JPanel(FlowLayout(FlowLayout.LEFT))
+        # token标志位置标签
         hbox_radiobtn = Box.createHorizontalBox()
         jlabel_tokenPosition = JLabel("Token Position: ")
         self.radioBtn01 = JRadioButton("Header")
         self.radioBtn02 = JRadioButton("Body")
-        # radioBtn01.setSelected(True)
         btnGroup = ButtonGroup()
         btnGroup.add(self.radioBtn01)
         btnGroup.add(self.radioBtn02)
@@ -141,55 +123,40 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hbox_radiobtn.add(jlabel_tokenPosition)
         hbox_radiobtn.add(self.radioBtn01)
         hbox_radiobtn.add(self.radioBtn02)
-        
-        # token
+        # token正则表达式标签
         hbox_token = Box.createHorizontalBox()
         vbox_token_header = Box.createVerticalBox()
         vbox_token_body = Box.createVerticalBox()
-
+        # token正则表达式标签：header中
         jlabel_tokenName = JLabel("tokenName: ")
         self.jtext_tokenName = JTextField(25)
         self.jtext_tokenName.setPreferredSize(Dimension(20,40))
-        self.jtext_tokenName.setMaximumSize(Dimension(100000,100000))
+        self.jtext_tokenName.setMaximumSize(Dimension(1000000000,1000000000))
         vbox_token_header.add(jlabel_tokenName)
         vbox_token_header.add(self.jtext_tokenName)
         vbox_token_header.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-
+        # token正则表达式标签：body中
         jlabel_tokenRegex = JLabel("tokenRegex: ")
         self.jtext_tokenRegex = JTextField(25)
         self.jtext_tokenRegex.setPreferredSize(Dimension(20,40))
-        self.jtext_tokenRegex.setMaximumSize(Dimension(100000,100000))
+        self.jtext_tokenRegex.setMaximumSize(Dimension(1000000000,1000000000))
         vbox_token_body.add(jlabel_tokenRegex)
         vbox_token_body.add(self.jtext_tokenRegex)
         vbox_token_body.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-
+        # token正则表达式标签
         hbox_token.add(vbox_token_header)
         hbox_token.add(vbox_token_body)
-
-        # test
+        # test测试按钮
         hbox_test = Box.createHorizontalBox()
         jbtn_test = JButton("TEST",actionPerformed=self.btnTest)
         self.jlabel_test = JLabel("Result: ")
-
         hbox_test.add(jbtn_test)
         hbox_test.add(self.jlabel_test)
         hbox_test.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-        # 填充
+        # 水平胶水填充
         hGlue_test = Box.createHorizontalGlue()
         hbox_test.add(hGlue_test)
-
-
-        # jpanel_left.add(hbox_url)
-        # jpanel_left.add(hbox_reqMeth)
-        # jpanel_left.add(hbox_contentType)
-        # jpanel_left.add(hbox_headers)
-        # jpanel_left.add(hbox_data)
-        # jpanel_left.add(hbox_radiobtn)
-        # jpanel_left.add(hbox_token)
-        # jpanel_left.add(hbox_test)
-        # jsplitpane.add(jpanel_left,JSplitPane.LEFT)
-        # jsplitpane.add(jpanel_right,JSplitPane.RIGHT)
-        # jsplitpane.setDividerLocation(0.5)
+        # 左垂直盒子：添加各种水平盒子
         vBox_left.add(hbox_url)
         vBox_left.add(hbox_reqMeth)
         vBox_left.add(hbox_contentType)
@@ -198,18 +165,17 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         vBox_left.add(hbox_radiobtn)
         vBox_left.add(hbox_token)
         vBox_left.add(hbox_test)
+        # 左垂直盒子：垂直胶水填充
+        vGlue_test = Box.createVerticalGlue()
+        vBox_left.add(vGlue_test)
 
 
-        # right panel
-        # layout = BoxLayout(jpanel_right, BoxLayout.Y_AXIS)
-        # jpanel_right.setLayout(layout )
-        # radioButton
+        # 右垂直盒子内部：指定token在请求包中的位置
+        # token标志位置单选按钮
         hbox_radiobtn_r = Box.createHorizontalBox()
-        # jpanel_radiobtn_r = JPanel(FlowLayout(FlowLayout.LEFT))
         jlabel_tokenPosition_r = JLabel("Token Position: ")
         self.radioBtn01_r = JRadioButton("Header")
         self.radioBtn02_r = JRadioButton("Body")
-        # radioBtn01.setSelected(True)
         btnGroup_r = ButtonGroup()
         btnGroup_r.add(self.radioBtn01_r)
         btnGroup_r.add(self.radioBtn02_r)
@@ -217,65 +183,62 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hbox_radiobtn_r.add(jlabel_tokenPosition_r)
         hbox_radiobtn_r.add(self.radioBtn01_r)
         hbox_radiobtn_r.add(self.radioBtn02_r)
-        # 填充
-        vGlue01 = Box.createGlue()
-        hbox_radiobtn_r.add(vGlue01)
+        # # 填充
+        # vGlue01 = Box.createGlue()
+        # hbox_radiobtn_r.add(vGlue01)
         
-        # token
+        # token正则表达式
         hbox_token_r = Box.createHorizontalBox()
         vbox_token_header_r = Box.createVerticalBox()
         vbox_token_body_r = Box.createVerticalBox()
-
+        # token正则表达式：在header中
         jlabel_tokenName_r = JLabel("tokenName: ")
         self.jtext_tokenName_r = JTextField(25)
         self.jtext_tokenName_r.setPreferredSize(Dimension(20,40))
-        self.jtext_tokenName_r.setMaximumSize(Dimension(100000,100000))
+        self.jtext_tokenName_r.setMaximumSize(Dimension(1000000000,1000000000))
         vbox_token_header_r.add(jlabel_tokenName_r)
         vbox_token_header_r.add(self.jtext_tokenName_r)
         vbox_token_header_r.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-
+        # token正则表达式：在Body中
         jlabel_tokenRegex_r = JLabel("tokenRegex: ")
         self.jtext_tokenRegex_r = JTextField(25)
         self.jtext_tokenRegex_r.setPreferredSize(Dimension(20,40))
-        self.jtext_tokenRegex_r.setMaximumSize(Dimension(100000,100000))
+        self.jtext_tokenRegex_r.setMaximumSize(Dimension(1000000000,1000000000))
         vbox_token_body_r.add(jlabel_tokenRegex_r)
         vbox_token_body_r.add(self.jtext_tokenRegex_r)
         vbox_token_body_r.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-
+        # token正则表达式
         hbox_token_r.add(vbox_token_header_r)
         hbox_token_r.add(vbox_token_body_r)
-
-        # test
+        # 测试按钮
         hbox_test_r = Box.createHorizontalBox()
         jbtn_test_r = JButton("TEST",actionPerformed=self.btnTest_r)
         self.jlabel_test_r = JLabel("Result: ")
-
         hbox_test_r.add(jbtn_test_r)
         hbox_test_r.add(self.jlabel_test_r)
         hbox_test_r.setBorder(BorderFactory.createLineBorder(Color.red, 3))
-        # 填充
+        # 水平胶水填充
         hGlue02 = Box.createHorizontalGlue()
         hbox_test_r.add(hGlue02)
-
+        
+        # 右垂直盒子：添加各种水平盒子
         vGlue = Box.createVerticalGlue()
-        # hbox_test_r = Box.createHorizontalBox()
-        # vBox_right = Box.createVerticalBox()
         vBox_right.add(hbox_radiobtn_r)
         vBox_right.add(hbox_token_r)
         vBox_right.add(hbox_test_r)
         vBox_right.add(vGlue)
-        # jpanel_right.add(vbox)
 
+        # 次外层水平盒子：添加左右两个垂直盒子
         hBox_main.add(vBox_left)
         hBox_main.add(vBox_right)
-        # self.mainPanel = jsplitpane
+        # 最外层垂直盒子：添加次外层水平盒子，垂直胶水
         out_vBox_main.add(hBox_main)
-        out_vBox_main.add(out_hGlue_main)
         jtext_gluetest = JTextField(25)
         jtext_gluetest.setPreferredSize(Dimension(20,40))
-        jtext_gluetest.setMaximumSize(Dimension(100000,100000))
+        jtext_gluetest.setMaximumSize(Dimension(1000000000,1000000000))
         out_vBox_main.add(jtext_gluetest)
-        # self.mainPanel = hBox_main
+        out_vBox_main.add(out_hGlue_main)
+        
         self.mainPanel = out_vBox_main
         self._callbacks.customizeUiComponent(self.mainPanel)
         self._callbacks.addSuiteTab(self)
