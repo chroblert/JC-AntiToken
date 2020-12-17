@@ -68,8 +68,8 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         # URL标签
         jlabel_url = JLabel("URL: ")
         self.jtext_url = JTextField(25)
-        self.jtext_url.setPreferredSize(Dimension(20,40))
-        self.jtext_url.setMaximumSize(Dimension(9999999,9999999))
+        # self.jtext_url.setPreferredSize(Dimension(20,40))
+        self.jtext_url.setMaximumSize(self.jtext_url.getPreferredSize())
         hbox_url = Box.createHorizontalBox()
         hbox_url.add(jlabel_url)
         hbox_url.add(self.jtext_url)
@@ -82,6 +82,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hbox_reqMeth = Box.createHorizontalBox()
         hbox_reqMeth.add(jlabel_reqMeth)
         hbox_reqMeth.add(self.jcombobox_reqMeth)
+        self.jcombobox_reqMeth.setMaximumSize(self.jcombobox_reqMeth.getPreferredSize())
         hbox_reqMeth.setBorder(BorderFactory.createLineBorder(Color.red, 3))
         # ContentType标签        
         jlabel_contentType = JLabel("ContentType: ")
@@ -91,12 +92,13 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hbox_contentType = Box.createHorizontalBox()
         hbox_contentType.add(jlabel_contentType)
         hbox_contentType.add(self.jcombobox_contentType)
+        self.jcombobox_contentType.setMaximumSize(self.jcombobox_contentType.getPreferredSize())
         hbox_contentType.setBorder(BorderFactory.createLineBorder(Color.red, 3))
         # 请求头标签
         jlabel_headers = JLabel("Headers: ")
         self.jtext_headers = JTextField(25)
-        self.jtext_headers.setPreferredSize(Dimension(20,40))
-        self.jtext_headers.setMaximumSize(Dimension(9999999,9999999))
+        # self.jtext_headers.setPreferredSize(Dimension(20,40))
+        self.jtext_headers.setMaximumSize(self.jtext_headers.getPreferredSize())
         hbox_headers = Box.createHorizontalBox()
         hbox_headers.add(jlabel_headers)
         hbox_headers.add(self.jtext_headers)
@@ -105,7 +107,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         jlabel_data = JLabel("Data: ")
         self.jtext_data = JTextField(25)
         self.jtext_data.setPreferredSize(Dimension(20,40))
-        self.jtext_data.setMaximumSize(Dimension(9999999,9999999))
+        self.jtext_data.setMaximumSize(self.jtext_data.getPreferredSize())
         hbox_data = Box.createHorizontalBox()
         hbox_data.add(jlabel_data)
         hbox_data.add(self.jtext_data)
@@ -124,27 +126,27 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hbox_radiobtn.add(self.radioBtn02)
         # token正则表达式标签
         hbox_token = Box.createHorizontalBox()
-        vbox_token_header = Box.createVerticalBox()
-        vbox_token_body = Box.createVerticalBox()
+        hbox_token_header = Box.createHorizontalBox()
+        hbox_token_body = Box.createHorizontalBox()
         # token正则表达式标签：header中
         jlabel_tokenName = JLabel("tokenName: ")
         self.jtext_tokenName = JTextField(25)
-        self.jtext_tokenName.setPreferredSize(Dimension(20,40))
-        self.jtext_tokenName.setMaximumSize(Dimension(9999999,9999999))
-        vbox_token_header.add(jlabel_tokenName)
-        vbox_token_header.add(self.jtext_tokenName)
-        vbox_token_header.setBorder(BorderFactory.createLineBorder(Color.red, 3))
+        # self.jtext_tokenName.setPreferredSize(Dimension(20,40))
+        self.jtext_tokenName.setMaximumSize(self.jtext_tokenName.getPreferredSize())
+        hbox_token_header.add(jlabel_tokenName)
+        hbox_token_header.add(self.jtext_tokenName)
+        hbox_token_header.setBorder(BorderFactory.createLineBorder(Color.red, 3))
         # token正则表达式标签：body中
         jlabel_tokenRegex = JLabel("tokenRegex: ")
         self.jtext_tokenRegex = JTextField(25)
-        self.jtext_tokenRegex.setPreferredSize(Dimension(20,40))
-        self.jtext_tokenRegex.setMaximumSize(Dimension(9999999,9999999))
-        vbox_token_body.add(jlabel_tokenRegex)
-        vbox_token_body.add(self.jtext_tokenRegex)
-        vbox_token_body.setBorder(BorderFactory.createLineBorder(Color.red, 3))
+        # self.jtext_tokenRegex.setPreferredSize(Dimension(20,40))
+        self.jtext_tokenRegex.setMaximumSize(self.jtext_tokenRegex.getPreferredSize())
+        hbox_token_body.add(jlabel_tokenRegex)
+        hbox_token_body.add(self.jtext_tokenRegex)
+        hbox_token_body.setBorder(BorderFactory.createLineBorder(Color.red, 3))
         # token正则表达式标签
-        hbox_token.add(vbox_token_header)
-        hbox_token.add(vbox_token_body)
+        hbox_token.add(hbox_token_header)
+        hbox_token.add(hbox_token_body)
         # test测试按钮
         hbox_test = Box.createHorizontalBox()
         jbtn_test = JButton("TEST",actionPerformed=self.btnTest)
@@ -221,7 +223,6 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hbox_test_r.add(hGlue02)
         
         # 右垂直盒子：添加各种水平盒子
-        vGlue = Box.createVerticalGlue()
         vBox_right.add(hbox_radiobtn_r)
         vBox_right.add(hbox_token_r)
         vBox_right.add(hbox_test_r)
@@ -229,6 +230,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         # jtext_gluetest2.setPreferredSize(Dimension(20,40))
         # jtext_gluetest2.setMaximumSize(Dimension(9999999,9999999))
         # vBox_right.add(jtext_gluetest2)
+        vGlue = Box.createVerticalGlue()
         vBox_right.add(vGlue)
 
         # 次外层水平盒子：添加左右两个垂直盒子
@@ -237,12 +239,12 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         # 最外层垂直盒子：添加次外层水平盒子，垂直胶水
         out_vBox_main.add(hBox_main)
         # 测试用JTextField
-        jtext_gluetest = JTextField(25)
-        jtext_gluetest.setPreferredSize(Dimension(20,40))
-        jtext_gluetest.setMaximumSize(Dimension(100000010,1000000010))
-        out_vBox_main.add(jtext_gluetest)
-        out_hGlue_main = Box.createGlue()
-        out_vBox_main.add(out_hGlue_main)
+        # jtext_gluetest = JTextField(25)
+        # jtext_gluetest.setPreferredSize(Dimension(20,40))
+        # jtext_gluetest.setMaximumSize(Dimension(100000010,1000000010))
+        # out_vBox_main.add(jtext_gluetest)
+        # out_hGlue_main = Box.createGlue()
+        # out_vBox_main.add(out_hGlue_main)
         
         self.mainPanel = out_vBox_main
         self._callbacks.customizeUiComponent(self.mainPanel)
