@@ -13,10 +13,12 @@ from burp import ITab
 from javax.swing import JMenu
 from javax.swing import JMenuItem
 from javax.swing import JPanel
+from javax.swing import JScrollPane
 from javax.swing import JButton
 from javax.swing import JFrame
 from javax.swing import JLabel
 from javax.swing import JTextField
+from javax.swing import JTextArea
 from javax.swing import JComboBox
 from javax.swing import JSplitPane
 from javax.swing.border import Border
@@ -39,6 +41,7 @@ import urllib
 import urllib2
 import json
 import sys
+import ssl
 
 sys_encoding = sys.getfilesystemencoding()
 
@@ -91,13 +94,24 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         jlabel_contentType = JLabel("ConType: ")
         self.jcombobox_contentType = JComboBox()
         self.jcombobox_contentType.addItem("application/json")
-        self.jcombobox_contentType.addItem("text/plain")
+        self.jcombobox_contentType.addItem("application/x-www-form-urlencoded")
         hbox_contentType = Box.createHorizontalBox()
         hbox_contentType.add(jlabel_contentType)
         hbox_contentType.add(self.jcombobox_contentType)
         self.jcombobox_contentType.setMaximumSize(self.jcombobox_contentType.getPreferredSize())
         hglue_contentType = Box.createHorizontalGlue()
         hbox_contentType.add(hglue_contentType)
+        # Charset标签        
+        jlabel_charset = JLabel("CharSet: ")
+        self.jcombobox_charset = JComboBox()
+        self.jcombobox_charset.addItem("UTF-8")
+        self.jcombobox_charset.addItem("GBK")
+        hbox_charset = Box.createHorizontalBox()
+        hbox_charset.add(jlabel_charset)
+        hbox_charset.add(self.jcombobox_charset)
+        self.jcombobox_charset.setMaximumSize(self.jcombobox_charset.getPreferredSize())
+        hglue_charset = Box.createHorizontalGlue()
+        hbox_charset.add(hglue_charset)
         # 请求头标签
         jlabel_headers = JLabel("Headers: ")
         self.jtext_headers = JTextField(generWidth)
@@ -162,15 +176,22 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hGlue_test = Box.createHorizontalGlue()
         hbox_test.add(hGlue_test)
         hbox_test.setBorder(BorderFactory.createLineBorder(Color.green, 2))
+        # 响应数据输出
+        hbox_resp = Box.createHorizontalBox()
+        self.jtextarea_resp = JTextArea()
+        jsp=JScrollPane(self.jtextarea_resp)
+        hbox_resp.add(self.jtextarea_resp)
         # 左垂直盒子：添加各种水平盒子
         vBox_left.add(hbox_url)
         vBox_left.add(hbox_reqMeth)
         vBox_left.add(hbox_contentType)
+        vBox_left.add(hbox_charset)
         vBox_left.add(hbox_headers)
         vBox_left.add(hbox_data)
         vBox_left.add(hbox_radiobtn)
         vBox_left.add(hbox_token)
         vBox_left.add(hbox_test)
+        vBox_left.add(hbox_resp)
         # 左垂直盒子：垂直胶水填充
         vGlue_test = Box.createGlue()
         vBox_left.add(vGlue_test)
@@ -215,7 +236,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hbox_token_r.add(hbox_token_body_r)
         # 测试按钮
         hbox_test_r = Box.createHorizontalBox()
-        jbtn_test_r = JButton("TEST",actionPerformed=self.btnTest_r)
+        jbtn_test_r = JButton("SET",actionPerformed=self.btnTest_r)
         self.jlabel_test_r = JLabel("Result: ")
         hbox_test_r.add(jbtn_test_r)
         hbox_test_r.add(self.jlabel_test_r)
@@ -366,13 +387,12 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         print(cookie)
         print("getNewToken")
         # url = "http://myip.ipip.net"
-        headers2={
+        headers_cookie={
             'Cookie':cookie,
-            'User-Agent':'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'
-            }
-        self.headers.update(**headers2)
+        }
+        self.headers.update(**headers_cookie)
         if self.reqMeth == "GET":
-            resp = self.sendGetHttp(self.url,self.headers,self.data)
+            resp = self.sendGetHttp(self.url,self.headers,self.data,self.contentType)
         else:
             resp = self.sendPostHttp(self.url,self.headers,self.data,self.contentType)
         respBody = resp.read()
@@ -403,98 +423,104 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
             else:
                 return None
 
-    def sendGetHttp(self,url,headers,data):
-        if data:
-            data = urllib.urlencode(data)
-            url = url + "?"+data
-            if headers:
+    def sendGetHttp(self,url,headers,data,contentType):
+        context = ssl._create_unverified_context()
+        headers_contentType = {
+            'Content-Type':contentType
+        }
+        if not headers.has_key("Content-Type"):
+            headers.update(**headers_contentType)
+        headers_userAgent={
+            'User-Agent':'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'
+        }
+        if not headers.has_key("User-Agent"):
+            headers.update(**headers_userAgent)
+        try:
+            if data != None:
+                # if "urlencode" in contentType:
+                data = urllib.urlencode(data)
+                url = url + "?"+data
                 req = urllib2.Request(url,headers=headers)
             else:
-                req = urllib2.Request(url)
-            resp = urllib2.urlopen(req)
-            return resp
-        else:
-            if headers:
                 req = urllib2.Request(url,headers=headers)
-            else:
-                req = urllib2.Request(url)
-            resp = urllib2.urlopen(req)
+            resp = urllib2.urlopen(req,context=context)
             return resp
+        except urllib2.HTTPError as error:
+            print("ERROR: ",error)
+            return None
 
     def sendPostHttp(self,url,headers,data,contentType):
+        context = ssl._create_unverified_context()
+        headers_contentType = {
+            'Content-Type':contentType
+        }
+        if not headers.has_key("Content-Type"):
+            headers.update(**headers_contentType)
+        headers_userAgent={
+            'User-Agent':'Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25'
+        }
+        if not headers.has_key("User-Agent"):
+            headers.update(**headers_userAgent)
+        print(headers)
         resp = ""
-        if data:
-            if headers:
-                if contentType == "urlencode":
-                    data = urllib.urlencode(data)
-                    req = urllib2.Request(url,headers=headers,data = data)
-                    resp = urllib2.urlopen(req)
-                    return resp
-                else:
-                    data = json.dumps(data)
-                    req = urllib2.Request(url,headers=headers,data = data)
-                    resp = urllib2.urlopen(req)
+        print("data: ",data)
+        if data != None:
+            if "urlencode" in contentType:
+                data = urllib.urlencode(data)
+                req = urllib2.Request(url,headers=headers,data = data)
             else:
-                if contentType == "urlencode":
-                    data = urllib.urlencode(data)
-                    req = urllib2.Request(url,data = data)
-                    resp = urllib2.urlopen(req)
-                    return resp
-                else:
-                    data = json.dumps(data)
-                    req = urllib2.Request(url,data = data)
-                    resp = urllib2.urlopen(req)
+                data = json.dumps(data)
+                req = urllib2.Request(url,headers=headers,data = data)
         else:
-            if headers:
-                if contentType == "urlencode":
-                    req = urllib2.Request(url,headers=headers)
-                    resp = urllib2.urlopen(req)
-                    return resp
-                else:
-                    data = json.dumps(data)
-                    req = urllib2.Request(url,headers=headers)
-                    resp = urllib2.urlopen(req)
+            if "urlencode" in contentType:
+                req = urllib2.Request(url,headers=headers)
             else:
-                if contentType == "urlencode":
-                    data = urllib.urlencode(data)
-                    req = urllib2.Request(url)
-                    resp = urllib2.urlopen(req)
-                    return resp
-                else:
-                    data = json.dumps(data)
-                    req = urllib2.Request(url)
-                    resp = urllib2.urlopen(req)
-        return resp
+                data = json.dumps(data)
+                req = urllib2.Request(url,headers=headers)
+        try:
+            resp = urllib2.urlopen(req,context=context)
+            return resp
+        except urllib2.HTTPError as error:
+            print("ERROR: ",error)
+            return None
 
     def btnTest(self,e):
         self.printcn("中文测试")
         self.url = self.jtext_url.getText()
+        if self.url == "":
+            self.jlabel_test.setText("please input url")
+            return
         self.reqMeth = self.jcombobox_reqMeth.getSelectedItem()
-        self.contentType = self.jcombobox_contentType.getSelectedItem()
+        # 用户设置content-type
+        self.contentType = self.jcombobox_contentType.getSelectedItem()+";charset="+self.jcombobox_charset.getSelectedItem()
+        # 用户有没有自定义请求头
         if self.jtext_headers.getText() != "":
             self.headers = json.loads(self.jtext_headers.getText())
         else:
             self.headers = {}
+        # 用户有没有自定义请求体
         if self.jtext_data.getText() != "":
             self.data = json.loads(self.jtext_data.getText())
         else:
-            self.data = {}
+            self.data = None
         self.tokenName = self.jtext_tokenName.getText()
         self.tokenRegex = self.jtext_tokenRegex.getText()
         resp = ''
         if self.reqMeth == "GET":
-            resp = self.sendGetHttp(self.url,self.headers,self.data)
-            # print(resp)
+            resp = self.sendGetHttp(self.url,self.headers,self.data,self.contentType)
         else:
             resp = self.sendPostHttp(self.url,self.headers,self.data,self.contentType)
-            # print(resp)
+        if resp == None:
+            self.jlabel_test.setText("error,detail in extender output")
+            return
         respHeader = resp.info().headers
-        print(respHeader)
-        print(resp.info().getheader("content-type"))
-        print(resp.info().getheader("set-cookie"))
-        print(resp.info().getheader("xxx"))
+        print("resp-headers: ",respHeader)
+        # print(resp.info().getheader("content-type"))
+        self.printcn(resp.info().getheader("set-cookie"))
+        # print(resp.info().getheader("xxx"))
         respBody = resp.read()
         print("respBody: ",respBody)
+        self.jtextarea_resp.setText("".join(respHeader)+"\n"+"".join(respBody))
         if(self.radioBtn01.isSelected()):
             self.tokenInHeader = True
             if self.tokenName == "":
