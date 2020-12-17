@@ -26,6 +26,7 @@ from javax.swing import ButtonGroup
 from javax.swing import Box
 
 from java.awt import Color
+from java.awt import Dimension
 from java.awt.event import *
 
 from java.awt import GridLayout
@@ -62,18 +63,22 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         # jpanel_left = JPanel(FlowLayout(FlowLayout.LEFT))
 
 
-        jsplitpane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT,True)
-        jpanel_left = JPanel(FlowLayout(FlowLayout.LEFT))
-        jpanel_right = JPanel(FlowLayout(FlowLayout.LEFT))
+        # jsplitpane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT,True)
+        # jpanel_left = JPanel(FlowLayout(FlowLayout.LEFT))
+        # jpanel_right = JPanel(FlowLayout(FlowLayout.LEFT))
+        out_vBox_main = Box.createVerticalBox()
+        out_hGlue_main = Box.createGlue()
         hBox_main = Box.createHorizontalBox()
         vBox_left = Box.createVerticalBox()
         vBox_right = Box.createVerticalBox()
 
         # left panel
-        layout = BoxLayout(jpanel_left, BoxLayout.Y_AXIS)
-        jpanel_left.setLayout(layout)
+        # layout = BoxLayout(jpanel_left, BoxLayout.Y_AXIS)
+        # jpanel_left.setLayout(layout)
         jlabel_url = JLabel("URL: ")
         self.jtext_url = JTextField(25)
+        self.jtext_url.setPreferredSize(Dimension(20,40))
+        self.jtext_url.setMaximumSize(Dimension(100000,100000))
         # jpanel_url = JPanel(FlowLayout(FlowLayout.LEFT))
         hbox_url = Box.createHorizontalBox()
         hbox_url.add(jlabel_url)
@@ -104,6 +109,8 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
 
         jlabel_headers = JLabel("Headers: ")
         self.jtext_headers = JTextField(25)
+        self.jtext_headers.setPreferredSize(Dimension(20,40))
+        self.jtext_headers.setMaximumSize(Dimension(100000,100000))
         # jpanel_headers = JPanel(FlowLayout(FlowLayout.LEFT))
         hbox_headers = Box.createHorizontalBox()
         hbox_headers.add(jlabel_headers)
@@ -112,6 +119,8 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
 
         jlabel_data = JLabel("Data: ")
         self.jtext_data = JTextField(25)
+        self.jtext_data.setPreferredSize(Dimension(20,40))
+        self.jtext_data.setMaximumSize(Dimension(100000,100000))
         # jpanel_data = JPanel(FlowLayout(FlowLayout.LEFT))
         hbox_data = Box.createHorizontalBox()
         hbox_data.add(jlabel_data)
@@ -140,12 +149,16 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
 
         jlabel_tokenName = JLabel("tokenName: ")
         self.jtext_tokenName = JTextField(25)
+        self.jtext_tokenName.setPreferredSize(Dimension(20,40))
+        self.jtext_tokenName.setMaximumSize(Dimension(100000,100000))
         vbox_token_header.add(jlabel_tokenName)
         vbox_token_header.add(self.jtext_tokenName)
         vbox_token_header.setBorder(BorderFactory.createLineBorder(Color.red, 3))
 
         jlabel_tokenRegex = JLabel("tokenRegex: ")
         self.jtext_tokenRegex = JTextField(25)
+        self.jtext_tokenRegex.setPreferredSize(Dimension(20,40))
+        self.jtext_tokenRegex.setMaximumSize(Dimension(100000,100000))
         vbox_token_body.add(jlabel_tokenRegex)
         vbox_token_body.add(self.jtext_tokenRegex)
         vbox_token_body.setBorder(BorderFactory.createLineBorder(Color.red, 3))
@@ -188,8 +201,8 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
 
 
         # right panel
-        layout = BoxLayout(jpanel_right, BoxLayout.Y_AXIS)
-        jpanel_right.setLayout(layout )
+        # layout = BoxLayout(jpanel_right, BoxLayout.Y_AXIS)
+        # jpanel_right.setLayout(layout )
         # radioButton
         hbox_radiobtn_r = Box.createHorizontalBox()
         # jpanel_radiobtn_r = JPanel(FlowLayout(FlowLayout.LEFT))
@@ -215,12 +228,16 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
 
         jlabel_tokenName_r = JLabel("tokenName: ")
         self.jtext_tokenName_r = JTextField(25)
+        self.jtext_tokenName_r.setPreferredSize(Dimension(20,40))
+        self.jtext_tokenName_r.setMaximumSize(Dimension(100000,100000))
         vbox_token_header_r.add(jlabel_tokenName_r)
         vbox_token_header_r.add(self.jtext_tokenName_r)
         vbox_token_header_r.setBorder(BorderFactory.createLineBorder(Color.red, 3))
 
         jlabel_tokenRegex_r = JLabel("tokenRegex: ")
         self.jtext_tokenRegex_r = JTextField(25)
+        self.jtext_tokenRegex_r.setPreferredSize(Dimension(20,40))
+        self.jtext_tokenRegex_r.setMaximumSize(Dimension(100000,100000))
         vbox_token_body_r.add(jlabel_tokenRegex_r)
         vbox_token_body_r.add(self.jtext_tokenRegex_r)
         vbox_token_body_r.setBorder(BorderFactory.createLineBorder(Color.red, 3))
@@ -252,7 +269,14 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hBox_main.add(vBox_left)
         hBox_main.add(vBox_right)
         # self.mainPanel = jsplitpane
-        self.mainPanel = hBox_main
+        out_vBox_main.add(hBox_main)
+        out_vBox_main.add(out_hGlue_main)
+        jtext_gluetest = JTextField(25)
+        jtext_gluetest.setPreferredSize(Dimension(20,40))
+        jtext_gluetest.setMaximumSize(Dimension(100000,100000))
+        out_vBox_main.add(jtext_gluetest)
+        # self.mainPanel = hBox_main
+        self.mainPanel = out_vBox_main
         self._callbacks.customizeUiComponent(self.mainPanel)
         self._callbacks.addSuiteTab(self)
         
