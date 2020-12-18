@@ -289,6 +289,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
     def processHttpMessage(self, toolflag, messageIsRequest, messageInfo):
         service = messageInfo.getHttpService()
         if messageIsRequest:
+            pass
             print("Host: " + str(service.getHost()))
             print("Port: "+ str(service.getPort()))
             print("Protocol: " + str(service.getProtocol()))
