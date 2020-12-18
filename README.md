@@ -81,3 +81,33 @@ WeChat: JC_SecNotes(Zer0ne安全研究)
 
 ## 0x04 总结
 比较简单的一款小burp插件，大部分时间耗在布局和排版上面了
+
+## 0x05 踩坑指南
+1. 问题：'unicode' object has no attribute 'items'
+
+	解决：
+		○ 在文件首行添加：
+		# -*- coding: utf-8 -*-
+		○ 在文件代码前添加：
+		sys_encoding = sys.getfilesystemencoding()
+2. 问题：BoxLayout控制JTextField的高度
+
+	解决：
+		textField = new JTextField( ... );
+		textField.setMaximumSize( textField.getPreferredSize() );
+		
+---
+	
+参考资料：[让BoxLayout管理器尊重JTextField的实际尺寸](https://blog.csdn.net/andycpp/article/details/1189221?utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-7.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-7.control)
+
+参考资料：[How do I keep JTextFields in a Java Swing BoxLayout from expanding?](https://stackoverflow.com/questions/2709220/how-do-i-keep-jtextfields-in-a-java-swing-boxlayout-from-expanding)
+
+参考资料：[HOW TO RAPIDLY BUILD A BURP SESSION HANDLING EXTENSION USING JAVASCRIPT](https://sec-consult.com/en/blog/2013/06/how-to-rapidly-build-a-burp-session-handling-extension-using-javascript/)
+
+参考资料：[BurpSuite插件编写](http://sh1yan.top/2020/03/02/Writing-the-burpseuite-plug-in-beginner/)
+
+参考资料：[urllib2添加headers和设置代理](https://blog.csdn.net/qq_37049781/article/details/81868372)
+
+参考资料：[re-正则表达式操作](https://docs.python.org/zh-cn/3/library/re.html)
+
+参考资料：[python中str,bytes,bytearray的相互转化](https://blog.csdn.net/doudoudouzoule/article/details/85335268)
