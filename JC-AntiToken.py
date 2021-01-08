@@ -54,7 +54,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         self._helpers = callbacks.getHelpers()
         callbacks.setExtensionName("JC-AntiToken")
         callbacks.registerContextMenuFactory(self)
-        callbacks.registerHttpListener(self)
+        # callbacks.registerHttpListener(self)
         callbacks.registerSessionHandlingAction(self)
         self.drawUI()
     def printcn(self,msg):
@@ -296,7 +296,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
             print("-----------------------------------")
     
     def getActionName(self):
-        return "JCAntiToken"
+        return "JC-AntiToken"
 
     def performAction(self,currentRequest,macroItems):
         # url
@@ -370,7 +370,13 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
             # tokenInReqBody
             else:
                 if re.match(self.tokenRegex_r,reqBody):
-                    reqBody = re.sub(self.tokenRegex_r,r'\1'+newToken+r'\3',reqBody,0,re.M|re.I)
+                    try:
+                        reqBody = re.sub(self.tokenRegex_r,r'\g<1>'+newToken+r'\g<3>',reqBody,0,re.M|re.I)
+                    except Exception as e:
+                        print(e)
+                        # print(reqBody)
+                        # reqBody = re.sub(self.tokenRegex_r,r'\g<1>'+newToken+r'\g<3>',reqBody,0,re.M|re.I)
+
             # if re.match(r'(.*?"_tokenName":")([a-zA-Z0-9]{6,})(")',reqBody):
             #     reqBody = re.sub(r'(.*?"_tokenName":")([a-zA-Z0-9]{6,})(")',r'\1'+newToken+r'\3',reqBody,0,re.M|re.I)
         # rebuild request
@@ -553,4 +559,6 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
             if self.tokenRegex_r == "":
                 self.jlabel_test_r.setText("please input tokenRegex")
                 return
+        self.jlabel_test_r.setText("SUCCESS")
+
         

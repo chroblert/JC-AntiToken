@@ -63,6 +63,9 @@ WeChat: JC_SecNotes(Zer0ne安全研究)
         - 设置TokenName
     - Body：在请求体中
         - 设置TokenRegex
+        - 格式：`(.*前缀)(要替换的地方)(后缀.*)`  
+        如：`(.*"_tokenName":")(.*?)(".*)` 匹配
+        `,"_tokenName":"ir9xGm"}`
 2. SET：检查并设置参数
 
 #### (三)、配置Session Handling Rules
