@@ -62,6 +62,12 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
     def drawUI(self):
         # 最外层：垂直盒子，内放一个水平盒子+一个胶水
         out_vBox_main = Box.createVerticalBox()
+        # 次外层：水平盒子，使用说明
+        hBox_usage = Box.createHorizontalBox()
+
+
+
+        
         # 次外层：水平盒子，内放两个垂直盒子
         hBox_main = Box.createHorizontalBox()
         # 左垂直盒子
@@ -397,7 +403,8 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         headers_cookie={
             'Cookie':cookie,
         }
-        self.headers.update(**headers_cookie)
+        if cookie != '':
+            self.headers.update(**headers_cookie)
         if self.reqMeth == "GET":
             resp = self.sendGetHttp(self.url,self.headers,self.data,self.contentType)
         else:
@@ -539,7 +546,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
                 self.jlabel_test.setText("please input tokenRegex")
                 return
         print(self.reqMeth)
-        newToken = self.getNewToken("var1=value1")
+        newToken = self.getNewToken("")
         if newToken != None:
             self.jlabel_test.setText("Result: "+str(newToken))
             self.jlabel_test.setBackground(Color.cyan)

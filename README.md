@@ -13,7 +13,9 @@ WeChat: JC_SecNotes(Zer0ne安全研究)
 **token防重放绕过**
 
 **界面效果如下：**
-![1608256210684.png](img/1608256210684.png)
+
+![1610097433549.png](img/1610097433549.png)
+
 
 ## 0x02 适用场景：
 
@@ -66,6 +68,8 @@ WeChat: JC_SecNotes(Zer0ne安全研究)
         - 格式：`(.*前缀)(要替换的地方)(后缀.*)`  
         如：`(.*"_tokenName":")(.*?)(".*)` 匹配
         `,"_tokenName":"ir9xGm"}`
+        ![1610097461291.png](img/1610097461291.png)
+
 2. SET：检查并设置参数
 
 #### (三)、配置Session Handling Rules
@@ -84,6 +88,8 @@ WeChat: JC_SecNotes(Zer0ne安全研究)
 
 ## 0x04 总结
 比较简单的一款小burp插件，大部分时间耗在布局和排版上面了
+
+注：防重放，使用多线程会报错，非本插件功能问题，是目标网站的限制
 
 ## 0x05 踩坑指南
 1. 问题：'unicode' object has no attribute 'items'
