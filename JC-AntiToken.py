@@ -63,9 +63,27 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         # 最外层：垂直盒子，内放一个水平盒子+一个胶水
         out_vBox_main = Box.createVerticalBox()
         # 次外层：水平盒子，使用说明
+        usage = u'''
+                             JC-AntiToken(简单防重放绕过)
+        适用场景：防重放的方式为，提前向一个页面发送请求取得token，替换到下一个页面中。
+        适用说明：
+            1. 请求头中Headers和Data的值必须是JSON字符串，如：{"var":"value"}
+            2. 左边tokenRegex的格式为：
+                a. .*开头，.*结尾，用()括住要取出的token
+                b. 如：.*,"token":"(.*?)".*
+            3. 右边tokenRegex的格式为：
+                a. 需要三个(),第二个()括住要替换的token
+                b. 如：(.*,"token":")(.*?)(".*)
+        详见：https://github.com/chroblert/JC-AntiToken
+        '''
         hBox_usage = Box.createHorizontalBox()
-
-
+        jpanel_test = JPanel()
+        jTextarea_usage = JTextArea()
+        jTextarea_usage.setText(usage)
+        jTextarea_usage.setRows(13)
+        jTextarea_usage.setEditable(False)
+        # jpanel_test.add(jTextarea_usage)
+        hBox_usage.add(JScrollPane(jTextarea_usage))
 
         
         # 次外层：水平盒子，内放两个垂直盒子
@@ -266,6 +284,7 @@ class BurpExtender(IBurpExtender,IContextMenuFactory,IHttpListener,ISessionHandl
         hBox_main.add(vBox_left)
         hBox_main.add(vBox_right)
         # 最外层垂直盒子：添加次外层水平盒子，垂直胶水
+        out_vBox_main.add(hBox_usage)
         out_vBox_main.add(hBox_main)
         
         self.mainPanel = out_vBox_main
